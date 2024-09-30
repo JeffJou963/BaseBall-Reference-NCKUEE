@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taiwanese Baseball Team Stats Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+        .stats-table th {
+            position: sticky;
+            top: 0;
+            background-color: #f3f4f6;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-6xl mx-auto">
+        <h1 class="text-4xl font-bold mb-8 text-center text-blue-800 shadow-sm p-4 bg-white rounded-lg">NCKU EE Baseball Team 2019 Stats</h1>
+        <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-8">
+            <div class="p-6">
+                <h2 class="text-2xl font-semibold mb-4 text-gray-800 border-b pb-2">Batter</h2>
+                <div class="overflow-x-auto max-h-196">
+                    <table id="statsTable" class="w-full stats-table">
+                        <thead class="bg-gray-200 text-gray-700">
+                            <tr>
+                                <th class="py-3 px-4 text-left cursor-pointer hover:bg-gray-300 transition duration-300" onclick="sortTable(0)">Player</th>
+                                <th class="py-3 px-4 text-center cursor-pointer hover:bg-gray-300 transition duration-300" onclick="sortTable(1)">PA</th>
+                                <th class="py-3 px-4 text-center cursor-pointer hover:bg-gray-300 transition duration-300" onclick="sortTable(2)">AB</th>
+                                <th class="py-3 px-4 text-center cursor-pointer hover:bg-gray-300 transition duration-300" onclick="sortTable(3)">H</th>
+                                <th class="py-3 px-4 text-center cursor-pointer hover:bg-gray-300 transition duration-300" onclick="sortTable(4)">1B</th>
+                                <th class="py-3 px-4 text-center cursor-pointer hover:bg-gray-300 transition duration-300" onclick="sortTable(5)">2B</th>
+                                <th class="py-3 px-4 text-center cursor-pointer hover:bg-gray-300 transition duration-300" onclick="sortTable(6)">3B</th>
+                                <th class="py-3 px-4 text-center cursor-pointer hover:bg-gray-300 transition duration-300" onclick="sortTable(7)">HR</th>
+                                <th class="py-3 px-4 text-center cursor-pointer hover:bg-gray-300 transition duration-300" onclick="sortTable(8)">RBI</th>
+                                <th class="py-3 px-4 text-center cursor-pointer hover:bg-gray-300 transition duration-300" onclick="sortTable(9)">SB</th>
+                                <th class="py-3 px-4 text-center cursor-pointer hover:bg-gray-300 transition duration-300" onclick="sortTable(10)">K</th>
+                                <th class="py-3 px-4 text-center cursor-pointer hover:bg-gray-300 transition duration-300" onclick="sortTable(11)">BB</th>
+                                <th class="py-3 px-4 text-center cursor-pointer hover:bg-gray-300 transition duration-300" onclick="sortTable(12)">AVG</th>
+                                <th class="py-3 px-4 text-center cursor-pointer hover:bg-gray-300 transition duration-300" onclick="sortTable(13)">OBP</th>
+                                <th class="py-3 px-4 text-center cursor-pointer hover:bg-gray-300 transition duration-300" onclick="sortTable(14)">SLG</th>
+                                <th class="py-3 px-4 text-center cursor-pointer hover:bg-gray-300 transition duration-300" onclick="sortTable(15)">OPS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="statsBody" class="text-gray-600">
+                            <!-- Table body will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Player data stored in an array
+    const playerData = [
+        { name: 'Wizard', pa: 10, ab: 8, h: 3, b1: 3, b2: 0, b3: 0, hr: 0, rbi: 3, sb: 2, k: 4, bb: 2 },
+        { name: 'A-Rod', pa: 8, ab: 8, h: 2, b1: 1, b2: 0, b3: 1, hr: 0, rbi: 2, sb: 2, k: 3, bb: 0 },
+        { name: 'YaoYao', pa: 9, ab: 7, h: 1, b1: 1, b2: 0, b3: 0, hr: 0, rbi: 1, sb: 0, k: 0, bb: 2 },
+        { name: '慈禧太后', pa: 24, ab: 18, h: 7, b1: 3, b2: 0, b3: 2, hr: 2, rbi: 9, sb: 3, k: 2, bb: 6 },
+        { name: '機器人博士', pa: 10, ab: 7, h: 3, b1: 2, b2: 1, b3: 0, hr: 0, rbi: 4, sb: 4, k: 1, bb: 3 },
+        { name: '劉哲', pa: 22, ab: 15, h: 7, b1: 7, b2: 0, b3: 0, hr: 0, rbi: 7, sb: 2, k: 3, bb: 7 },
+        { name: 'BanBan', pa: 23, ab: 19, h: 7, b1: 6, b2: 1, b3: 0, hr: 0, rbi: 3, sb: 4, k: 2, bb: 4 },
+        { name: '石頭', pa: 13, ab: 10, h: 3, b1: 3, b2: 0, b3: 0, hr: 0, rbi: 1, sb: 1, k: 4, bb: 3 },
+        { name: '台南大地主', pa: 16, ab: 15, h: 5, b1: 5, b2: 0, b3: 0, hr: 0, rbi: 2, sb: 3, k: 7, bb: 1 },
+        { name: 'Sunny', pa: 3, ab: 2, h: 0, b1: 0, b2: 0, b3: 0, hr: 0, rbi: 0, sb: 0, k: 0, bb: 1 },
+        { name: 'Only1', pa: 5, ab: 4, h: 1, b1: 0, b2: 0, b3: 1, hr: 0, rbi: 0, sb: 2, k: 2, bb: 1 },
+        { name: 'G7', pa: 24, ab: 20, h: 7, b1: 4, b2: 3, b3: 0, hr: 0, rbi: 9, sb: 0, k: 7, bb: 4 },
+        { name: 'JeffJou', pa: 25, ab: 21, h: 8, b1: 7, b2: 0, b3: 1, hr: 0, rbi: 3, sb: 3, k: 6, bb: 4 },
+        { name: '辜董', pa: 4, ab: 3, h: 1, b1: 1, b2: 0, b3: 0, hr: 0, rbi: 1, sb: 0, k: 1, bb: 1 },
+        { name: '右', pa: 3, ab: 3, h: 1, b1: 1, b2: 0, b3: 0, hr: 0, rbi: 0, sb: 0, k: 2, bb: 0 },
+        { name: 'Kai', pa: 11, ab: 10, h: 1, b1: 1, b2: 0, b3: 0, hr: 0, rbi: 2, sb: 2, k: 2, bb: 1 },
+        { name: 'Muscle', pa: 4, ab: 3, h: 0, b1: 0, b2: 0, b3: 0, hr: 0, rbi: 0, sb: 0, k: 2, bb: 1 },
+        { name: '起司貓咪', pa: 8, ab: 7, h: 0, b1: 0, b2: 0, b3: 0, hr: 0, rbi: 0, sb: 0, k: 1, bb: 1 },
+        { name: 'Ke', pa: 1, ab: 1, h: 0, b1: 0, b2: 0, b3: 0, hr: 0, rbi: 0, sb: 0, k: 0, bb: 0 },
+        { name: '信一', pa: 1, ab: 1, h: 1, b1: 1, b2: 0, b3: 0, hr: 0, rbi: 0, sb: 1, k: 0, bb: 0 },
+        { name: '補教名師', pa: 6, ab: 4, h: 2, b1: 1, b2: 1, b3: 0, hr: 0, rbi: 2, sb: 3, k: 1, bb: 2 },
+        { name: '微醺', pa: 2, ab: 2, h: 1, b1: 1, b2: 0, b3: 0, hr: 0, rbi: 0, sb: 0, k: 0, bb: 0 },
+        { name: '味全', pa: 4, ab: 4, h: 0, b1: 0, b2: 0, b3: 0, hr: 0, rbi: 0, sb: 0, k: 2, bb: 0 },
+        { name: 'Yummy', pa: 1, ab: 1, h: 0, b1: 0, b2: 0, b3: 0, hr: 0, rbi: 0, sb: 0, k: 1, bb: 0 },
+        { name: '余謙', pa: 3, ab: 2, h: 1, b1: 0, b2: 1, b3: 0, hr: 0, rbi: 0, sb: 0, k: 0, bb: 1 },
+        { name: '陳辰', pa: 6, ab: 5, h: 2, b1: 2, b2: 0, b3: 0, hr: 0, rbi: 0, sb: 0, k: 3, bb: 1 },
+        { name: '施學長', pa: 6, ab: 5, h: 1, b1: 0, b2: 1, b3: 0, hr: 0, rbi: 0, sb: 0, k: 0, bb: 1 },
+        { name: '機械逃將', pa: 2, ab: 1, h: 0, b1: 0, b2: 0, b3: 0, hr: 0, rbi: 0, sb: 0, k: 0, bb: 1 },
+        { name: '高原', pa: 4, ab: 3, h: 0, b1: 0, b2: 0, b3: 0, hr: 0, rbi: 1, sb: 0, k: 0, bb: 1 },
+        { name: 'TSMC_AZ碩', pa: 2, ab: 2, h: 0, b1: 0, b2: 0, b3: 0, hr: 0, rbi: 0, sb: 0, k: 1, bb: 0 },
+        { name: '流川楓', pa: 1, ab: 1, h: 0, b1: 0, b2: 0, b3: 0, hr: 0, rbi: 0, sb: 0, k: 0, bb: 0 },
+        { name: '體育老師', pa: 0, ab: 0, h: 0, b1: 0, b2: 0, b3: 0, hr: 0, rbi: 0, sb: 0, k: 0, bb: 0 }
+
+        // Add more players here
+    ];
+
+    function calculateStats(player) {
+        const avg = player.h / player.ab;
+        const obp = (player.h + player.bb) / player.pa;
+        const slg = (player.b1 + 2*player.b2 + 3*player.b3 + 4*player.hr) / player.ab;
+        return {
+            avg: isNaN(avg) ? "0.000" : avg.toFixed(3),
+            obp: isNaN(obp) ? "0.000" : obp.toFixed(3),
+            slg: isNaN(slg) ? "0.000" : slg.toFixed(3),
+            ops: isNaN(obp + slg) ? "0.000" : (obp + slg).toFixed(3)            
+        };
+    }
+
+    function populateTable() {
+        const tbody = document.getElementById('statsBody');
+        tbody.innerHTML = '';  // Clear existing rows
+
+        playerData.forEach(player => {
+            const stats = calculateStats(player);
+            const row = `
+                <tr class="border-b border-gray-200 hover:bg-gray-100 transition duration-300">
+                    <td class="py-3 px-4 font-medium">${player.name}</td>
+                    <td class="py-3 px-4 text-right">${player.pa}</td>
+                    <td class="py-3 px-4 text-right">${player.ab}</td>
+                    <td class="py-3 px-4 text-right">${player.h}</td>
+                    <td class="py-3 px-4 text-right">${player.b1}</td>
+                    <td class="py-3 px-4 text-right">${player.b2}</td>
+                    <td class="py-3 px-4 text-right">${player.b3}</td>
+                    <td class="py-3 px-4 text-right">${player.hr}</td>
+                    <td class="py-3 px-4 text-right">${player.rbi}</td>
+                    <td class="py-3 px-4 text-right">${player.sb}</td>
+                    <td class="py-3 px-4 text-right">${player.k}</td>
+                    <td class="py-3 px-4 text-right">${player.bb}</td>
+                    <td class="py-3 px-4 text-right font-bold">${stats.avg}</td>
+                    <td class="py-3 px-4 text-right font-bold">${stats.obp}</td>
+                    <td class="py-3 px-4 text-right font-bold">${stats.slg}</td>
+                    <td class="py-3 px-4 text-right font-bold">${stats.ops}</td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
+        });
+    }
+    
+    // when sorting avg, obp, slg and ops kick out pa<3
+    function sortTable(n) {
+        const table = document.getElementById("statsTable");
+        const tbody = table.getElementsByTagName("tbody")[0];
+        const rows = Array.from(tbody.getElementsByTagName("tr"));
+        let dir = "desc"; // Default to descending order on the first click
+
+        const header = table.rows[0].getElementsByTagName("TH")[n];
+        const isCurrentlyAscending = header.classList.contains("asc");
+        const isCurrentlyDescending = header.classList.contains("desc");
+
+        // Toggle the sorting direction
+        if (isCurrentlyDescending) {
+            dir = "asc";
+        } else {
+            dir = "desc";
+        }
+
+        rows.sort((a, b) => {
+            const x = a.getElementsByTagName("TD")[n].textContent.trim();
+            const y = b.getElementsByTagName("TD")[n].textContent.trim();
+            
+            if (n === 0) {
+                if (dir === "desc") {
+                    return y.localeCompare(x);
+                } else {
+                    return x.localeCompare(y);
+                }
+            } else {
+                if (dir === "desc") {
+                    return parseFloat(y) - parseFloat(x);
+                } else {
+                    return parseFloat(x) - parseFloat(y);
+                }
+            }
+        });
+
+        // Update the header class to reflect the new sorting direction
+        if (dir === "asc") {
+            header.classList.remove("desc");
+            header.classList.add("asc");
+        } else {
+            header.classList.remove("asc");
+            header.classList.add("desc");
+        }
+
+        // Rebuild the table body with sorted rows
+        tbody.innerHTML = '';
+        rows.forEach(row => tbody.appendChild(row));
+    }
+
+    // Populate the table when the page loads
+    window.onload = populateTable;
+    </script>
+</body>
+</html>
