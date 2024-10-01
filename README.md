@@ -1,4 +1,4 @@
-# NCKUEE_BaseBall_Reference
+# BaseBall_Reference_NCKUEE
 A record of NCKU EE Baseball Team 2019 Stats
 
 1. Download the folder baseball_stat
